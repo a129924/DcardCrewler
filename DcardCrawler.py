@@ -166,13 +166,3 @@ METHOD
 
         end_time = time.time()
         print(f"總計下載{count}個檔案,共計花費{end_time - start_time:.2f}秒")
-
-# %%
-if __name__ == '__main__':
-    data1 = DcardCrawler(get_path="GET_FORUMS_POSTS",forums="sex", popular=True, limit=100)
-    data_json = data1.get_request_json()
-    # %%
-    data1.data_cleaning()
-    # %%
-    data1.run_download_img()
-    # %%
