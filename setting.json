@@ -1,0 +1,12 @@
+{
+    "GET_ALL_POSTS": "https://www.dcard.tw/service/api/v2/posts",
+    "GET_FORUMS_POSTS": "https://www.dcard.tw/service/api/v2/forums/{forums}/posts",
+    "GET_THE_POST": "https://www.dcard.tw/service/api/v2/posts/{post_id}",
+    "GET_POST_LINK": "https://www.dcard.tw/service/api/v2/posts/{post_id}/links",
+    "GET_POST_CONTENT": "https://www.dcard.tw/service/api/v2/posts/{post_id}/comments",
+    "METHOD": [
+        "popular", 
+        "limit",  
+        "after"
+    ]
+}
