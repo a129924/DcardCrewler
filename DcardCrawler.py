@@ -1,11 +1,10 @@
-# %%
 import requests
 import json
 import os
 import urllib.request
 from fake_useragent import UserAgent
 import pandas as pd
-import time
+import time ,re
 
 class DcardCrawler:
     """
@@ -45,15 +44,11 @@ METHOD
             
     # 把引入的參數 變成網址路徑
     def _mix_url_params(self, methods:dict) -> str: # str #V
-        # for key, value in methods.items():
-        #     if key in ["popular", "limit", "after"]:
-        #         parameter = "" + key + "=" + str(value).lower() + "&"
         parameter = "&".join(map(str, [f"{key}={str(value).lower()}" for key, value in methods.items() if key in ["popular", "limit", "after"]]))
-        
         return f"?{parameter}" if len(parameter) > 0 else ""
     
     # 把API回傳的 轉成json格式
-    def get_request_json(self) -> json:  # json #V
+    def getDardApi(self) -> json:  # json #V
         # dressup
         ua = UserAgent()
         response = requests.get(self.url, headers={'user-agent': ua.random})
@@ -80,25 +75,25 @@ METHOD
         return self._df_mask
     
     # 判斷路徑是否合法
-    def _islegalpath(self, path_name: str) -> bool:
+
+    def _isLegalPath(self, filepath:str) -> bool:
         """
         True:path為正確的檔案路徑
         False:path為錯誤的檔案路徑
         """
-        try:
-            #判斷型態符合
-            if not isinstance(path_name, str) or not path_name:
-                return False
-            #檔案總長度不能超過260字元(包含:/以及HomeDrive) 跟path_name不得為空白
-            assert len(path_name) < 260 or path_name.isspace()
-            try:
-                os.lstat(path_name)
-            except AssertionError:
-                return False
-            return True
-        except Exception:
-            return False
-        
+        HomeDrive, HomePath = os.path.splitdrive(filepath)
+
+        if not HomeDrive:
+            filepath = os.path.join(os.getcwd(), HomePath[2:])
+
+        re_path = r'^(?P<path>(?:[a-zA-Z]:)?\\(?:[^\\\?\/\*\|<>:"]+\\)+)' \
+            r'(?P<filename>(?P<name>[^\\\?\/\*\|<>:"]+?)|\.' \
+            r'(?P<ext>[^.\\\?\/\*\|<>:"]+))$'
+
+        path_flag = re.search(re_path, filepath)
+
+        return path_flag is not None
+    
     # 判斷路徑是否存在 存在回傳True
     def _file_is_exists(self, filepath: str) -> bool: return os.path.isfile(filepath) # V
     
@@ -106,8 +101,8 @@ METHOD
     def _folder_is_exists(self, folder_name: str) -> bool: return os.path.isdir(folder_name) # V
     
     # 把結果download成json檔存在路徑
-    def json_to_file(self, filepath: str = r".\data", filename: str = "dcard"):  # V
-        assert self._islegalpath(filename), f"檔案路徑錯誤: {filename}"
+    def json_to_file(self, filepath: str = "data", filename: str = "dcard"):  # V
+        assert self._isLegalPath(filename), f"檔案路徑錯誤: {filename}"
         
         data = self.data
         #判斷資料夾是否存在
@@ -146,13 +141,14 @@ METHOD
             
     # 執行download_img
     def run_download_img(self, download_location: str = r'.\data') -> None:  # V
+        # dowload_location帶入參數 必須帶r'downloadlocation'
         # download_location若是不帶HomeDrive 則會存在執行檔所在的download_location中
-        assert self._islegalpath(download_location), f"檔案路徑錯誤:'{download_location}'"
+        assert self._isLegalPath(download_location), f"檔案路徑錯誤:'{download_location}'"
         count = 0
         start_time = time.time()
         
         for i in self._df_mask.index:
-            title = eval(repr(self._df_mask["title"][i].replace(">", "").replace("<", "").replace("*", "")).replace('\\', '').replace(".", "·"))
+            title = eval(repr(self._df_mask["title"][i].replace(">", "").replace("<", "").replace("*", "")).replace('\\', '').replace(".", "·").replace("/",""))
 
             for url in self._df_mask["media"][i]:
                 img_url = url["url"]
