@@ -52,26 +52,32 @@ $ pip install pandas
 ---
 
 ## 如何使用
-建置好環境後，放置在路徑底下，並創建`main.py`
+建置好環境後，放置在路徑底下，並創建`main.py`，或者是參考附加的`main.py`
 
     |-- setting.json
     |-- DcardCrawler.py
     |-- main.py
 
 ### 簡單實例
-假如現在要下載穿塔版熱門前一百大文章的圖片
+假如現在要下載**穿塔版**熱門前一百大文章的圖片
 ```python=
 #==============================main.py=====================================
+
 # 載入套件
-import DcardCrawler
+from DcardCrawler import DcardCrawler
 
 # 初始化程式
-data = DcardCrawler(get_path="GET_FORUMS_POSTS",
-                          forums="dressup", popular=True, limit=100)
-# 將取得的資料轉換成dataframe
-data.data_cleaning()
-# 執行下載圖片
-data.run_download_img()
+data1 = DcardCrawler(get_path="GET_FORUMS_POSTS",
+                    forums="dressup", popular=True, 
+                    limit=100)
+#從API取得的資料轉換成json
+data1.getDardApi()
+# 將json轉換成dataframe 並篩選出要的欄位
+data1.data_cleaning()
+# 執行下載圖片 路徑必須加r ex: r".\data" 或者是 r'D:\data'
+# 預設為 ".\data"
+data1.run_download_img()
+
 
 ```
 
