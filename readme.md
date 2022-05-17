@@ -1,6 +1,6 @@
 ---
 Title: Dcard爬蟲機器人
-Date: 2022/05/14 22:45
+Date: 2022/05/17 15:00
 
 ---
 
@@ -52,6 +52,28 @@ $ pip install pandas
 ---
 
 ## 如何使用
+
+### 文件說明
+在使用之前，我先說明主程式簡易的參數解說，同樣一份說明我也註記在主程式之中。
+```python=
+#==========================DcardCrawler.py===================================
+"""
+***取得文章預設是30筆 limit最大為100筆
+GET_ALL_POST # 取得所有的文章
+GET_FORUMS_POSTS # 取得該板所有文章
+GET_THE_POST # 取得該文章
+GET_POST_LINK # 取得該文章連結
+GET_POST_CONTENT" # 取得該文章所有留言
+
+METHOD
+"popular "# 熱門=true #由舊到新=false
+"limit" # 限制回傳的資料 最多100筆 熱門回應只取前3筆
+"after", # 取得下一頁資訊 利用該文章回傳最多樓層 例如after=1 會取得1之後 不包含1
+"""
+```
+這是依據[DCARD API說明文件](https://blog.jiatool.com/posts/dcard_api_v2/)所制定的格式，其中`METHOD`限制API回傳的值
+
+### 開始使用
 建置好環境後，放置在路徑底下，並創建`main.py`，或者是參考附加的`main.py`
 
     |-- setting.json
@@ -77,8 +99,6 @@ data1.data_cleaning()
 # 執行下載圖片 路徑必須加r ex: r".\data" 或者是 r'D:\data'
 # 預設為 ".\data"
 data1.run_download_img()
-
-
 ```
 
 執行完成後，檔案結構如下
